@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import it.prova.gestioneimpiegatojdbc.dao.IBaseDAO;
-import it.provagestioneimpiegatojdbc.model.Compagnia;
-import it.provagestioneimpiegatojdbc.model.Impiegato;
+import it.prova.gestioneimpiegatojdbc.model.Compagnia;
+import it.prova.gestioneimpiegatojdbc.model.Impiegato;
 
 
 

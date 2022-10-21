@@ -9,9 +9,8 @@ import java.util.Date;
 import java.util.List;
 
 import it.prova.gestioneimpiegatojdbc.dao.AbstractMySQLDAO;
-
-import it.provagestioneimpiegatojdbc.model.Compagnia;
-import it.provagestioneimpiegatojdbc.model.Impiegato;
+import it.prova.gestioneimpiegatojdbc.model.Compagnia;
+import it.prova.gestioneimpiegatojdbc.model.Impiegato;
 
 public class CompagniaDAOImpl extends AbstractMySQLDAO implements CompagniaDAO {
 

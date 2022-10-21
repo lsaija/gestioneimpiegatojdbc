@@ -12,8 +12,8 @@ import it.prova.gestioneimpiegatojdbc.dao.compagnia.CompagniaDAO;
 import it.prova.gestioneimpiegatojdbc.dao.compagnia.CompagniaDAOImpl;
 import it.prova.gestioneimpiegatojdbc.dao.impiegato.ImpiegatoDAO;
 import it.prova.gestioneimpiegatojdbc.dao.impiegato.ImpiegatoDAOImpl;
-import it.provagestioneimpiegatojdbc.model.Compagnia;
-import it.provagestioneimpiegatojdbc.model.Impiegato;
+import it.prova.gestioneimpiegatojdbc.model.Compagnia;
+import it.prova.gestioneimpiegatojdbc.model.Impiegato;
 
 public class TestGestioneImpiegato {
 

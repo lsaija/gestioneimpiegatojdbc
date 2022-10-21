@@ -1,4 +1,4 @@
-package it.provagestioneimpiegatojdbc.model;
+package it.prova.gestioneimpiegatojdbc.model;
 
 import java.util.Date;
 
