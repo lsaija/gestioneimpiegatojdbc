@@ -35,22 +35,20 @@ public class TestGestioneImpiegato {
 			testInsertCompagnia(compagniaDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " compagnie.");
 
-			
-
 			testDeleteCompagnia(compagniaDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
 
 			testFindAllByRagioneSocialeContiene(compagniaDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
 
-			testInsertImpiegato(impiegatoDAOInstance);
+			testInsertImpiegato(impiegatoDAOInstance, compagniaDAOInstance);
 			System.out.println("In tabella impiegato ci sono " + impiegatoDAOInstance.list().size() + " impiegati.");
 
 			testFindAllByDataAssunzioneMaggioreDi(compagniaDAOInstance, impiegatoDAOInstance);
 			System.out.println("In tabella impiegato ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
 
-			testGetImpiegato(impiegatoDAOInstance);
+			testGetImpiegato(impiegatoDAOInstance, compagniaDAOInstance);
 
 			testDeleteImpiegato(impiegatoDAOInstance);
 			System.out.println("In tabella impiegato ci sono " + impiegatoDAOInstance.list().size() + " impiegati.");
@@ -101,10 +99,14 @@ public class TestGestioneImpiegato {
 		List<Compagnia> listaCompagniePresenti = compagniaDAOInstance.list();
 		if (listaCompagniePresenti.isEmpty()) {
 			throw new RuntimeException("testDeleteCompagnia : FAILED,nessun elemento da rimuovere");
-
 		}
 
-		Compagnia compagniaDaRimuovere = listaCompagniePresenti.get(0);
+		Compagnia compagniaDaRimuovere = new Compagnia("RagioneSociale", 100,
+				new SimpleDateFormat("dd-MM-yyyy").parse("03-01-2022"));
+		compagniaDAOInstance.insert(compagniaDaRimuovere);
+		listaCompagniePresenti = compagniaDAOInstance.list();
+		compagniaDaRimuovere = listaCompagniePresenti.get(listaCompagniePresenti.size() - 1);
+
 		int verifica = compagniaDAOInstance.delete(compagniaDaRimuovere);
 		if (verifica < 1) {
 			throw new RuntimeException("testDeleteCompagnia : FAILED");
@@ -141,9 +143,11 @@ public class TestGestioneImpiegato {
 		Date dataRicercata = new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2000");
 		Date dataCreazione = new SimpleDateFormat("dd-MM-yyyy").parse("03-01-2022");
 		Compagnia temp = new Compagnia("tesla", 100000, dataCreazione);
+		compagniaDAOInstance.insert(temp);
 		Date dataNa = new SimpleDateFormat("dd-MM-yyyy").parse("04-01-1997");
 		Date dataAssu = new SimpleDateFormat("dd-MM-yyyy").parse("03-01-2023");
-		Impiegato assunto = new Impiegato("Mario", "Rossi", "mrrss##", dataNa, dataAssu, temp);
+		Compagnia prov = compagniaDAOInstance.list().get(compagniaDAOInstance.list().size() - 1);
+		Impiegato assunto = new Impiegato("Mario", "Rossi", "mrrss##", dataNa, dataAssu, prov);
 		impiegatoDAOInstance.insert(assunto);
 
 		listaImpiegatiPresenti = compagniaDAOInstance.findAllByDataAssunzioneMaggioreDi(dataRicercata);
@@ -154,28 +158,42 @@ public class TestGestioneImpiegato {
 
 	}
 
-	private static void testInsertImpiegato(ImpiegatoDAO impiegatoDAOInstance) throws Exception {
+	private static void testInsertImpiegato(ImpiegatoDAO impiegatoDAOInstance, CompagniaDAO compagniaDAOInstance)
+			throws Exception {
 		System.out.println(".......testInsertImpiegato inizio.............");
-
-		Compagnia temp = new Compagnia();
-		temp.setId(3l);
+		List<Compagnia> listaCompagniePresenti = compagniaDAOInstance.list();
+		Compagnia compagniaTemp = new Compagnia("RagioneSociale", 100,
+				new SimpleDateFormat("dd-MM-yyyy").parse("03-01-2022"));
+		compagniaDAOInstance.insert(compagniaTemp);
+		listaCompagniePresenti = compagniaDAOInstance.list();
+		compagniaTemp = listaCompagniePresenti.get(listaCompagniePresenti.size() - 1);
 		Date dataNa = new SimpleDateFormat("dd-MM-yyyy").parse("04-01-1997");
 		Date dataAssu = new SimpleDateFormat("dd-MM-yyyy").parse("03-01-2023");
 
 		int inseriti = impiegatoDAOInstance
-				.insert(new Impiegato("Paolo", "Bianco", "polbnc###", dataNa, dataAssu, temp));
+				.insert(new Impiegato("Paolo", "Bianco", "polbnc###", dataNa, dataAssu, compagniaTemp));
 		if (inseriti < 1)
 			throw new RuntimeException("testInsertCompagnia : FAILED");
 
 		System.out.println(".......testInsertImpiegato fine: PASSED.............");
 	}
 
-	private static void testGetImpiegato(ImpiegatoDAO impiegatoDAOInstance) throws Exception {
+	private static void testGetImpiegato(ImpiegatoDAO impiegatoDAOInstance, CompagniaDAO compagniaDAOInstance)
+			throws Exception {
 		System.out.println(".......testGet inizio.............");
 
 		List<Impiegato> elencoPresenti = impiegatoDAOInstance.list();
-		Impiegato elementoRicercato = impiegatoDAOInstance.get(0L);
-		System.out.println(elementoRicercato);
+		Date dataCreazione = new SimpleDateFormat("dd-MM-yyyy").parse("03-01-2022");
+		Compagnia temp = new Compagnia("tesla", 100000, dataCreazione);
+		compagniaDAOInstance.insert(temp);
+		Compagnia prov = compagniaDAOInstance.list().get(compagniaDAOInstance.list().size() - 1);
+		Date dataNa = new SimpleDateFormat("dd-MM-yyyy").parse("04-01-1997");
+		Date dataAssu = new SimpleDateFormat("dd-MM-yyyy").parse("03-01-2023");
+		Impiegato tempImp = new Impiegato("Mario", "Rossi", "mrrss##", dataNa, dataAssu, prov);
+		impiegatoDAOInstance.insert(tempImp);
+		Impiegato provImp = impiegatoDAOInstance.list().get(impiegatoDAOInstance.list().size() - 1);
+
+		System.out.println(prov.getId());
 
 		System.out.println(".......testGet fine: PASSED.............");
 	}
@@ -198,16 +216,19 @@ public class TestGestioneImpiegato {
 		}
 	}
 
-	private static void testFindAllByCompagnia(ImpiegatoDAO impiegatoDAOIstance, CompagniaDAO compagniaDAOIstance)
+	private static void testFindAllByCompagnia(ImpiegatoDAO impiegatoDAOInstance, CompagniaDAO compagniaDAOInstance)
 			throws Exception {
 		System.out.println(".......testFindAllByCompagnia inizio.............");
-		List<Impiegato> impiegatiCer = impiegatoDAOIstance.list();
-
-		Compagnia cercata = new Compagnia();
-		Impiegato temp = new Impiegato();
-		temp.setCompagnia(cercata);
-		impiegatoDAOIstance.insert(temp);
-		impiegatiCer = impiegatoDAOIstance.findAllByCompagnia(cercata);
+		List<Impiegato> impiegatiCer = impiegatoDAOInstance.list();
+		Date dataCreazione = new SimpleDateFormat("dd-MM-yyyy").parse("03-01-2022");
+		Compagnia temp = new Compagnia("tesla", 100000, dataCreazione);
+		Compagnia cercata = compagniaDAOInstance.list().get(compagniaDAOInstance.list().size() - 1);
+		Date dataNa = new SimpleDateFormat("dd-MM-yyyy").parse("04-01-1997");
+		Date dataAssu = new SimpleDateFormat("dd-MM-yyyy").parse("03-01-2023");
+		Impiegato tempImp = new Impiegato("Mario", "Rossi", "mrrss##", dataNa, dataAssu, cercata);
+		impiegatoDAOInstance.insert(tempImp);
+		Impiegato provImp = impiegatoDAOInstance.list().get(impiegatoDAOInstance.list().size() - 1);
+		impiegatiCer = impiegatoDAOInstance.findAllByCompagnia(cercata);
 		if (impiegatiCer.size() < 1) {
 			throw new RuntimeException("testFindAllByCompagnia : FAILED");
 		} else {
@@ -218,14 +239,24 @@ public class TestGestioneImpiegato {
 
 	private static void testcountByDataFondazioneCompagniaGreaterThan(ImpiegatoDAO impiegatoDAOInstance,
 			CompagniaDAO compagniaDAOInstance) throws Exception {
-		int verifica = 0;
+		System.out.println(".......testcountByDataFondazioneCompagniaGreaterThan inizio.............");
+
+		Compagnia compagniaTemp = new Compagnia("RagioneSociale", 100,
+				new SimpleDateFormat("dd-MM-yyyy").parse("03-01-2022"));
+		compagniaDAOInstance.insert(compagniaTemp);
+		List<Impiegato> elencoPresenti = impiegatoDAOInstance.list();
+		List<Compagnia> listaCompagniePresenti = compagniaDAOInstance.list();
+		compagniaTemp = listaCompagniePresenti.get(listaCompagniePresenti.size() - 1);
+
+		Date dataNa = new SimpleDateFormat("dd-MM-yyyy").parse("04-01-1997");
+		Date dataAssu = new SimpleDateFormat("dd-MM-yyyy").parse("03-01-2023");
+		Impiegato tempImp = new Impiegato("Mario", "Rossi", "mrrss##", dataNa, dataAssu, compagniaTemp);
+		impiegatoDAOInstance.insert(tempImp);
+		Impiegato provImp = impiegatoDAOInstance.list().get(impiegatoDAOInstance.list().size() - 1);
+
 		Date dataCercata = new SimpleDateFormat("dd-MM-yyyy").parse("04-01-1997");
-		Date dataTemp = new SimpleDateFormat("dd-MM-yyyy").parse("03-01-2023");
-		Impiegato temp = new Impiegato();
-		Compagnia para = new Compagnia();
-		para.setDataFondazione(dataTemp);
-		temp.setCompagnia(para);
-		impiegatoDAOInstance.insert(temp);
+
+		int verifica = 0;
 		verifica = impiegatoDAOInstance.countByDataFondazioneCompagniaGreaterThan(dataCercata);
 		if (verifica < 1) {
 			throw new RuntimeException("testcountByDataFondazioneCompagniaGreaterThan : FAILED");
@@ -236,17 +267,21 @@ public class TestGestioneImpiegato {
 
 	private static void testfindAllErroriAssunzione(ImpiegatoDAO impiegatoDAOInstance,
 			CompagniaDAO compagniaDAOInstance) throws Exception {
-		List<Impiegato> listaImpiegatiPresenti = new ArrayList();
-		Date dataAssu = new SimpleDateFormat("dd-MM-yyyy").parse("04-01-1997");
-		Date dataFond = new SimpleDateFormat("dd-MM-yyyy").parse("03-01-2023");
-		Impiegato temp = new Impiegato();
-		Compagnia para = new Compagnia();
-		para.setDataFondazione(dataFond);
-		temp.setCompagnia(para);
-		temp.setDataAssunzione(dataAssu);
-		impiegatoDAOInstance.insert(temp);
-		listaImpiegatiPresenti = impiegatoDAOInstance.findAllErroriAssunzione();
-		if (listaImpiegatiPresenti.isEmpty()) {
+		Compagnia compagniaTemp = new Compagnia("RagioneSociale", 100,
+				new SimpleDateFormat("dd-MM-yyyy").parse("03-01-2023"));
+		compagniaDAOInstance.insert(compagniaTemp);
+		List<Impiegato> elencoPresenti = impiegatoDAOInstance.list();
+		List<Compagnia> listaCompagniePresenti = compagniaDAOInstance.list();
+		compagniaTemp = listaCompagniePresenti.get(listaCompagniePresenti.size() - 1);
+
+		Date dataNa = new SimpleDateFormat("dd-MM-yyyy").parse("04-01-1997");
+		Date dataAssu = new SimpleDateFormat("dd-MM-yyyy").parse("03-01-2020");
+		Impiegato tempImp = new Impiegato("Mario", "Rossi", "mrrss##", dataNa, dataAssu, compagniaTemp);
+		impiegatoDAOInstance.insert(tempImp);
+		Impiegato provImp = impiegatoDAOInstance.list().get(impiegatoDAOInstance.list().size() - 1);
+
+		elencoPresenti = impiegatoDAOInstance.findAllErroriAssunzione();
+		if (elencoPresenti.isEmpty()) {
 			throw new RuntimeException("testfindAllErroriAssunzione : FAILED");
 		} else {
 			System.out.println(".......testfindAllErroriAssunzione fine: PASSED.............");

@@ -207,6 +207,7 @@ public class CompagniaDAOImpl extends AbstractMySQLDAO implements CompagniaDAO {
 			ps.setDate(1, new java.sql.Date(dataMin.getTime()));
 
 			try (ResultSet rs = ps.executeQuery();) {
+				while(rs.next()) {
 				Compagnia tempo = new Compagnia();
 				tempo.setRagioneSociale(rs.getString("ragionesociale"));
 				tempo.setId(rs.getLong("id"));
@@ -220,6 +221,7 @@ public class CompagniaDAOImpl extends AbstractMySQLDAO implements CompagniaDAO {
 				temp.setCompagnia(tempo);
 				temp.setId(rs.getLong("id"));
 				result.add(temp);
+			   }
 			}
 
 		} catch (Exception e) {

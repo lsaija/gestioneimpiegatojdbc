@@ -222,7 +222,7 @@ public class ImpiegatoDAOImpl extends AbstractMySQLDAO implements ImpiegatoDAO {
 		return result;
 
 	}
-	
+
 	@Override
 	public List<Impiegato> findAllByCompagnia(Compagnia compagniaInput) throws Exception {
 		if (isNotActive()) {
